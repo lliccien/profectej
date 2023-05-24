@@ -22,4 +22,12 @@ app.MapGet("/dbconexion", async ([FromServices] TasksContext dbContext) =>
     return Results.Ok("Database in postgreSQL runing: " + dbContext.Database.IsNpgsql());
 });
 
+app.MapGet("/api/tasks", async ([FromServices] TasksContext dbContext) => {
+    return Results.Ok(dbContext.Tasks.Include(p => p.Category));
+});
+
+app.MapGet("/api/tasks-priority-low", async ([FromServices] TasksContext dbContext) => {
+    return Results.Ok(dbContext.Tasks.Include(p => p.Category).Where(p => p.PriorityTask == projectef.Models.Priority.Low));
+});
+
 app.Run();
