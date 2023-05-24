@@ -30,4 +30,18 @@ app.MapGet("/api/tasks-priority-low", async ([FromServices] TasksContext dbConte
     return Results.Ok(dbContext.Tasks.Include(p => p.Category).Where(p => p.PriorityTask == projectef.Models.Priority.Low));
 });
 
+app.MapPost("/api/tasks", async ([FromServices] TasksContext dbContext, [FromBody] projectef.Models.Task task) => {
+
+    task.TaskId = Guid.NewGuid();
+    task.CreatedAt =  DateTime.Now;
+
+    // await dbContext.AddAsync(task);
+    await dbContext.Tasks.AddAsync(task);
+
+    await dbContext.SaveChangesAsync();
+
+    return Results.Created("/api/tasks", null);
+
+});
+
 app.Run();
