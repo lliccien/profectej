@@ -44,4 +44,21 @@ app.MapPost("/api/tasks", async ([FromServices] TasksContext dbContext, [FromBod
 
 });
 
+app.MapPut("/api/tasks/{id}", async ([FromServices] TasksContext dbContext, [FromBody] projectef.Models.Task task, [FromRoute] Guid id) => {
+
+    var taskFound =  dbContext.Tasks.Find(id);
+
+    if(taskFound is null) return Results.NotFound();
+
+    taskFound.CategoryId = task.CategoryId != null ? task.CategoryId : taskFound.CategoryId;
+    taskFound.Title = task.Title != null ? task.Title : taskFound.Title;
+    taskFound.Description = task.Description != null ? task.Description : taskFound.Description;
+    taskFound.PriorityTask = task.PriorityTask != 0 ? task.PriorityTask : taskFound.PriorityTask;
+
+    await dbContext.SaveChangesAsync();
+
+    return Results.NoContent();
+
+});
+
 app.Run();
